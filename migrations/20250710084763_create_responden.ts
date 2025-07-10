@@ -1,6 +1,9 @@
 import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
+  const hasTable = await knex.schema.hasTable('responden');
+  if (hasTable) return; // Tabel sudah ada dari migrasi sebelumnya
+
   await knex.schema.createTable('responden', (table) => {
     table.increments('id').primary();
     table.string('tipe_responden', 100).notNullable();

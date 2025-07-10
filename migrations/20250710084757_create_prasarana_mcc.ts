@@ -367,8 +367,32 @@ export async function up(knex: Knex): Promise<void> {
       is_active: true
     }
   ]);
+
+  // Recreate view facility_rating_statistics setelah tabel prasarana_mcc tersedia
+  await knex.raw(`
+    CREATE VIEW IF NOT EXISTS facility_rating_statistics AS
+    SELECT 
+      p.id as prasarana_id,
+      p.nama_prasarana,
+      COUNT(fl.id) as total_feedback,
+      AVG(fl.rating_fasilitas) as avg_rating_fasilitas,
+      AVG(fl.rating_kebersihan) as avg_rating_kebersihan,
+      AVG(fl.rating_pelayanan) as avg_rating_pelayanan,
+      AVG(fl.rating_keamanan) as avg_rating_keamanan,
+      AVG(fl.rating_akses) as avg_rating_akses,
+      AVG((fl.rating_fasilitas + fl.rating_kebersihan + fl.rating_pelayanan + fl.rating_keamanan + fl.rating_akses) / 5.0) as avg_rating_overall,
+      COUNT(CASE WHEN fl.akan_gunakan_lagi = 1 THEN 1 END) as will_use_again_count,
+      COUNT(CASE WHEN fl.akan_gunakan_lagi = 0 THEN 1 END) as wont_use_again_count,
+      COUNT(CASE WHEN fl.masalah_teknis IS NOT NULL AND fl.masalah_teknis != '' THEN 1 END) as technical_issues_count
+    FROM prasarana_mcc p
+    LEFT JOIN feedback_lainnya fl ON p.id = fl.prasarana_id
+    LEFT JOIN feedback_data_diri fdd ON fl.feedback_data_diri_id = fdd.id
+    WHERE fdd.status_feedback = 'submitted' OR fdd.status_feedback = 'reviewed' OR fdd.id IS NULL
+    GROUP BY p.id, p.nama_prasarana;
+  `);
 }
 
 export async function down(knex: Knex): Promise<void> {
+  await knex.raw('DROP VIEW IF EXISTS facility_rating_statistics');
   await knex.schema.dropTableIfExists('prasarana_mcc');
 } 
