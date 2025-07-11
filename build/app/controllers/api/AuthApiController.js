@@ -144,19 +144,17 @@ class AuthApiController {
                 }).catch(reject);
             });
             const { pwd, konfirm_pwd, email, no_telp, nama, alamat, jenis_kelamin_personal, umur, deskripsi, facebook, instagram, twitter, youtube, tiktok } = formData.fields;
-            const name = nama;
-            const phone = no_telp;
             const password = pwd;
             console.log('Register personal request', {
-                name,
+                nama,
                 email,
-                phone,
+                no_telp,
                 timestamp: new Date().toISOString(),
             });
             console.log('Register personal parsed fields:', formData.fields);
             console.log('Register personal parsed files:', Object.keys(formData.files));
             const foto = formData.files?.foto;
-            if (!name || !email || !password) {
+            if (!nama || !email || !password) {
                 return response.status(422).json({
                     statusCode: 422,
                     message: "Data wajib tidak lengkap",
@@ -205,9 +203,9 @@ class AuthApiController {
             const hashedPassword = await Authenticate_1.default.hash(password);
             const userData = {
                 id: userId,
-                name,
+                name: nama,
                 email: email.toLowerCase(),
-                phone: phone || null,
+                phone: no_telp || null,
                 password: hashedPassword,
                 foto: fotoPath,
                 alamat: alamat || null,

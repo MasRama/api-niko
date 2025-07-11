@@ -180,16 +180,14 @@ class AuthApiController {
         facebook, instagram, twitter, youtube, tiktok
       } = formData.fields;
 
-      // Mapping nama field eksternal ke internal
-      const name = nama;
-      const phone = no_telp;
+      // Gunakan field asli dari request tanpa mapping tambahan
       const password = pwd;
 
       // Log request untuk endpoint register personal (setelah parsing)
       console.log('Register personal request', {
-        name,
+        nama,
         email,
-        phone,
+        no_telp,
         timestamp: new Date().toISOString(),
       });
 
@@ -200,7 +198,7 @@ class AuthApiController {
       const foto = formData.files?.foto;
 
       // Validasi
-      if (!name || !email || !password) {
+      if (!nama || !email || !password) {
         return response.status(422).json({
           statusCode: 422,
           message: "Data wajib tidak lengkap",
@@ -257,9 +255,9 @@ class AuthApiController {
 
       const userData = {
         id: userId,
-        name,
+        name: nama,
         email: email.toLowerCase(),
-        phone: phone || null,
+        phone: no_telp || null,
         password: hashedPassword,
         foto: fotoPath,
         alamat: alamat || null,
