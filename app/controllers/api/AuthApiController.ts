@@ -244,24 +244,42 @@ class AuthApiController {
         twitter: twitter || null,
         linkedin: linkedin || null,
         website: website || null,
-        is_verified: false,
-        is_verified_user: false,
+        is_verified: true, // langsung verifikasi
+        is_verified_user: true,
         created_at: dayjs().toDate(),
         updated_at: dayjs().toDate()
       };
 
       await DB.from("users").insert(userData);
 
+      // Generate token pair langsung setelah registrasi
+      const tokens = JWTUtils.generateTokenPair(userId, email.toLowerCase());
+
+      // Simpan session
+      const sessionId = randomUUID();
+      const deviceId = JWTUtils.generateSecureId(16);
+      await DB.from("sessions").insert({
+        id: sessionId,
+        user_id: userId,
+        access_token: tokens.accessToken,
+        refresh_token: tokens.refreshToken,
+        expires_at: dayjs().add(tokens.expiresIn, 'seconds').toDate(),
+        refresh_expires_at: dayjs().add(tokens.refreshExpiresIn, 'seconds').toDate(),
+        device_type: 'mobile',
+        device_id: deviceId,
+        user_agent: request.headers["user-agent"] || null
+      });
+
       // Send verification email
       await this.sendVerificationEmail(userData);
 
       return response.status(201).json({
         statusCode: 201,
-        message: "Registrasi berhasil. Silakan cek email untuk verifikasi akun.",
+        message: "Registrasi berhasil",
         data: {
-          user_id: userId,
-          email: userData.email,
-          is_verified: false
+          access_token: tokens.accessToken,
+          refresh_token: tokens.refreshToken,
+          is_verified_user: true
         }
       });
 
@@ -382,8 +400,8 @@ class AuthApiController {
         phone: phone || null,
         password: hashedPassword,
         alamat: alamat || null,
-        is_verified: false,
-        is_verified_user: false,
+        is_verified: true, // langsung verifikasi
+        is_verified_user: true,
         created_at: dayjs().toDate(),
         updated_at: dayjs().toDate()
       };
@@ -417,7 +435,7 @@ class AuthApiController {
           user_id: userId,
           email: userData.email,
           instansi_id: instansiData.id,
-          is_verified: false
+          is_verified: true
         }
       });
 

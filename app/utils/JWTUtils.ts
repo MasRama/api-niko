@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
 interface JWTPayload {
-  userId: number;
+  userId: string;
   email: string;
   type: 'access' | 'refresh';
   iat: number;
@@ -24,7 +24,7 @@ export class JWTUtils {
   /**
    * Generate access token
    */
-  static generateAccessToken(userId: number, email: string): string {
+  static generateAccessToken(userId: string, email: string): string {
     const now = Math.floor(Date.now() / 1000);
     const payload: JWTPayload = {
       userId,
@@ -40,7 +40,7 @@ export class JWTUtils {
   /**
    * Generate refresh token
    */
-  static generateRefreshToken(userId: number, email: string): string {
+  static generateRefreshToken(userId: string, email: string): string {
     const now = Math.floor(Date.now() / 1000);
     const payload: JWTPayload = {
       userId,
@@ -56,7 +56,7 @@ export class JWTUtils {
   /**
    * Generate both access and refresh tokens
    */
-  static generateTokenPair(userId: number, email: string): TokenPair {
+  static generateTokenPair(userId: string, email: string): TokenPair {
     const accessToken = this.generateAccessToken(userId, email);
     const refreshToken = this.generateRefreshToken(userId, email);
 
