@@ -176,18 +176,29 @@ class BookingApiController {
 
         // Create prasarana bookings
         for (const booking of prasaranaBookings) {
-          const prasaranaBookingId = await trx("prasarana_bookings").insert({
-            booking_event_id: bookingEventId,
-            prasarana_mcc_id: booking.prasarana_mcc_id,
-            tanggal_penggunaan: booking.tanggal_penggunaan,
-            status: 'active',
-            created_at: dayjs().toDate(),
-            updated_at: dayjs().toDate()
-          }).returning('id');
+          const prasaranaBookingIdRaw = await trx("prasarana_bookings")
+            .insert({
+              booking_event_id: bookingEventId,
+              prasarana_mcc_id: booking.prasarana_mcc_id,
+              tanggal_penggunaan: booking.tanggal_penggunaan,
+              status: 'active',
+              created_at: dayjs().toDate(),
+              updated_at: dayjs().toDate()
+            })
+            .returning('id');
 
-          const prasaranaBookingIdValue = Array.isArray(prasaranaBookingId) 
-            ? prasaranaBookingId[0] 
-            : prasaranaBookingId;
+          // Knex with SQLite can return various shapes (array of number, array of object, single number)
+          let prasaranaBookingIdValue: number;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if (Array.isArray(prasaranaBookingIdRaw)) {
+            const first: any = prasaranaBookingIdRaw[0];
+            prasaranaBookingIdValue = typeof first === 'object' ? first.id : first;
+          } else if (typeof prasaranaBookingIdRaw === 'object') {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            prasaranaBookingIdValue = (prasaranaBookingIdRaw as any).id;
+          } else {
+            prasaranaBookingIdValue = prasaranaBookingIdRaw as unknown as number;
+          }
 
           // Create booking waktu entries
           for (const waktuId of booking.waktu_booking_id) {
@@ -364,7 +375,7 @@ class BookingApiController {
     try {
       const prasaranaId = request.params.prasarana_id;
       const tanggal = request.params.tanggal;
-      const userId = request.user.id;
+      const userId = request.user ? request.user.id : null;
 
       // Validate prasarana exists
       const prasarana = await DB.from("prasarana_mcc")
@@ -389,8 +400,7 @@ class BookingApiController {
         .select([
           "id",
           "waktu_mulai",
-          "waktu_selesai",
-          "nama_slot"
+          "waktu_selesai"
         ]);
 
       // Get booked time slots for this prasarana and date
@@ -407,9 +417,9 @@ class BookingApiController {
         ]);
 
       const bookedSlotIds = bookedSlots.map(slot => slot.waktu_booking_id);
-      const userBookedSlots = bookedSlots
-        .filter(slot => slot.account_id === userId)
-        .map(slot => slot.waktu_booking_id);
+      const userBookedSlots = userId
+        ? bookedSlots.filter(slot => slot.account_id === userId).map(slot => slot.waktu_booking_id)
+        : [];
 
       // Format response
       const jadwalData = allTimeSlots.map(slot => ({
@@ -564,8 +574,7 @@ class BookingApiController {
             .where("bw.prasarana_booking_id", prasarana.prasarana_booking_id)
             .select([
               "wb.waktu_mulai",
-              "wb.waktu_selesai",
-              "wb.nama_slot"
+              "wb.waktu_selesai"
             ])
             .orderBy("wb.waktu_mulai", "asc");
 

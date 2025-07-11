@@ -7,6 +7,7 @@ import InfrastructureApiController from '../app/controllers/api/InfrastructureAp
 import BookingApiController from '../app/controllers/api/BookingApiController';
 import EventApiController from '../app/controllers/api/EventApiController';
 import FeedbackApiController from '../app/controllers/api/FeedbackApiController';
+import KategoriApiController from '../app/controllers/api/KategoriApiController';
 
 // Import JWT Middlewares
 import { jwtAuth as jwtRequired, optionalJwtAuth as jwtOptional, refreshableJwtAuth as jwtRefreshable } from '../app/middlewares/jwtAuth';
@@ -110,6 +111,7 @@ ApiRoute.get('/endpoints', (req, res) => {
 ApiRoute.post('/auth/login', [authRateLimiter.middleware], AuthApiController.login);
 ApiRoute.post('/auth/register-personal', [authRateLimiter.middleware, uploadRateLimiter.middleware], AuthApiController.registerPersonal);
 ApiRoute.post('/auth/register-instansi', [authRateLimiter.middleware, uploadRateLimiter.middleware], AuthApiController.registerInstansi);
+ApiRoute.post('/instansi-user', [authRateLimiter.middleware, uploadRateLimiter.middleware], AuthApiController.registerInstansi);
 ApiRoute.post('/auth/verify-account', [authRateLimiter.middleware], AuthApiController.verifyAccount);
 
 /**
@@ -151,6 +153,7 @@ ApiRoute.post('/auth/reset-password', [jwtRequired()], ProfileApiController.chan
  */
 ApiRoute.get('/infrastructure/list', InfrastructureApiController.getAllInfrastruktur);
 ApiRoute.get('/infrastructure/:id', InfrastructureApiController.getInfrastrukturById);
+ApiRoute.get('/infrastruktur/sarana-prasarana', InfrastructureApiController.getAllInfrastruktur);
 ApiRoute.get('/booking/infra-user', [jwtRequired()], InfrastructureApiController.getBookingInfraList);
 ApiRoute.get('/infrastructure/facility-overview', InfrastructureApiController.getFacilityOverview);
 ApiRoute.get('/infrastructure/search-prasarana', InfrastructureApiController.searchPrasarana);
@@ -167,6 +170,16 @@ ApiRoute.get('/infrastructure/search-prasarana', InfrastructureApiController.sea
 ApiRoute.post('/booking/booking-ruangan', [jwtRequired(), uploadRateLimiter.middleware], BookingApiController.createBooking);
 ApiRoute.get('/booking/event/user', [jwtRequired()], BookingApiController.getUserBookings);
 ApiRoute.get('/booking/jadwal/:prasarana_id/:tanggal', BookingApiController.getJadwalAvailability);
+ApiRoute.get('/booking/show-jadwal/:idPrasarana', (req, res) => {
+    // Pemetaan parameter agar kompatibel dengan controller lama
+    // idPrasarana -> prasarana_id, query date -> tanggal (default hari ini)
+    // @ts-ignore
+    req.params.prasarana_id = req.params.idPrasarana;
+    // @ts-ignore
+    req.params.tanggal = (req.query_parameters?.date as string) || new Date().toISOString().split('T')[0];
+    // @ts-ignore
+    return BookingApiController.getJadwalAvailability(req, res);
+});
 ApiRoute.get('/booking/status', [jwtRequired()], BookingApiController.getBookingStatus);
 ApiRoute.get('/booking/:booking_id/detail', [jwtRequired()], BookingApiController.getBookingDetail);
 
@@ -203,5 +216,12 @@ ApiRoute.post('/feedback-lainnya/create/:idBooking?', [jwtOptional], FeedbackApi
 ApiRoute.get('/responded/pertanyaan/pendapat', FeedbackApiController.getOpinionQuestions);
 ApiRoute.delete('/feedback/:id', [jwtRequired()], FeedbackApiController.deleteFeedback);
 ApiRoute.get('/feedback/statistics', [jwtRequired()], FeedbackApiController.getFeedbackStatistics);
+
+/**
+ * Kategori Routes (No JWT)
+ * ------------------------------------------------
+ * GET /kategori - Get all categories
+ */
+ApiRoute.get('/kategori', KategoriApiController.getKategori);
 
 export default ApiRoute; 
