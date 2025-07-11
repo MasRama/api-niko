@@ -143,7 +143,10 @@ class AuthApiController {
                     resolve({ fields, files });
                 }).catch(reject);
             });
-            const { name, email, phone, password, alamat, jenis_kelamin_personal, umur, deskripsi, instagram, facebook, twitter, linkedin, website } = formData.fields;
+            const { pwd, konfirm_pwd, email, no_telp, nama, alamat, jenis_kelamin_personal, umur, deskripsi, facebook, instagram, twitter, youtube, tiktok } = formData.fields;
+            const name = nama;
+            const phone = no_telp;
+            const password = pwd;
             console.log('Register personal request', {
                 name,
                 email,
@@ -160,7 +163,7 @@ class AuthApiController {
                     errors: [
                         {
                             rule: "required",
-                            field: "name",
+                            field: "nama",
                             message: "Nama wajib diisi"
                         },
                         {
@@ -170,7 +173,7 @@ class AuthApiController {
                         },
                         {
                             rule: "required",
-                            field: "password",
+                            field: "pwd",
                             message: "Password wajib diisi"
                         }
                     ],
@@ -214,8 +217,8 @@ class AuthApiController {
                 instagram: instagram || null,
                 facebook: facebook || null,
                 twitter: twitter || null,
-                linkedin: linkedin || null,
-                website: website || null,
+                youtube: youtube || null,
+                tiktok: tiktok || null,
                 is_verified: true,
                 is_verified_user: true,
                 created_at: (0, dayjs_1.default)().toDate(),

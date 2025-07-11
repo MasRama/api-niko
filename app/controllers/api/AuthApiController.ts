@@ -175,10 +175,15 @@ class AuthApiController {
       });
       
       const {
-        name, email, phone, password, alamat, 
+        pwd, konfirm_pwd, email, no_telp, nama, alamat,
         jenis_kelamin_personal, umur, deskripsi,
-        instagram, facebook, twitter, linkedin, website
+        facebook, instagram, twitter, youtube, tiktok
       } = formData.fields;
+
+      // Mapping nama field eksternal ke internal
+      const name = nama;
+      const phone = no_telp;
+      const password = pwd;
 
       // Log request untuk endpoint register personal (setelah parsing)
       console.log('Register personal request', {
@@ -202,7 +207,7 @@ class AuthApiController {
           errors: [
             {
               rule: "required",
-              field: "name",
+              field: "nama",
               message: "Nama wajib diisi"
             },
             {
@@ -212,7 +217,7 @@ class AuthApiController {
             },
             {
               rule: "required",
-              field: "password",
+              field: "pwd",
               message: "Password wajib diisi"
             }
           ],
@@ -264,8 +269,8 @@ class AuthApiController {
         instagram: instagram || null,
         facebook: facebook || null,
         twitter: twitter || null,
-        linkedin: linkedin || null,
-        website: website || null,
+        youtube: youtube || null,
+        tiktok: tiktok || null,
         is_verified: true, // langsung verifikasi
         is_verified_user: true,
         created_at: dayjs().toDate(),
