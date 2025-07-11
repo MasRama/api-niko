@@ -436,7 +436,7 @@ class AuthApiController {
         email: email.toLowerCase(),
         phone: phone || null,
         password: hashedPassword,
-        alamat: alamat || null,
+        // alamat: alamat || null,
         is_verified: true, // langsung verifikasi
         is_verified_user: true,
         created_at: dayjs().toDate(),

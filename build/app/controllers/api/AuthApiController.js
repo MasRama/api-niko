@@ -346,7 +346,6 @@ class AuthApiController {
                 email: email.toLowerCase(),
                 phone: phone || null,
                 password: hashedPassword,
-                alamat: alamat || null,
                 is_verified: true,
                 is_verified_user: true,
                 created_at: (0, dayjs_1.default)().toDate(),
