@@ -147,7 +147,18 @@ class AuthApiController {
    */
   public async registerPersonal(request: Request, response: Response) {
     try {
-      // Parse multipart form data with proper handler
+      // Log mentah (raw) request body/form-data
+      console.log('Raw register personal request (headers & body):', {
+        headers: request.headers,
+        // Catat info form-data mentah, jika ada
+        method: request.method,
+        url: request.url,
+        // Tidak bisa log stream body secara langsung, jadi log info saja
+        note: 'Form-data multipart diterima, parsing dimulai',
+        timestamp: new Date().toISOString(),
+      });
+
+      // Parse multipart form data dengan handler yang sesuai
       const formData = await new Promise<{ fields: any; files: any }>((resolve, reject) => {
         const fields: any = {};
         const files: any = {};
@@ -169,7 +180,7 @@ class AuthApiController {
         instagram, facebook, twitter, linkedin, website
       } = formData.fields;
 
-      // Log request untuk endpoint register personal
+      // Log request untuk endpoint register personal (setelah parsing)
       console.log('Register personal request', {
         name,
         email,
@@ -177,9 +188,13 @@ class AuthApiController {
         timestamp: new Date().toISOString(),
       });
 
+      // Log fields dan files mentah hasil parsing
+      console.log('Register personal parsed fields:', formData.fields);
+      console.log('Register personal parsed files:', Object.keys(formData.files));
+
       const foto = formData.files?.foto;
 
-      // Validation
+      // Validasi
       if (!name || !email || !password) {
         return response.status(422).json({
           statusCode: 422,
@@ -205,7 +220,7 @@ class AuthApiController {
         });
       }
 
-      // Check if email already exists
+      // Cek apakah email sudah terdaftar
       const existingUser = await DB.from("users")
         .where("email", email.toLowerCase())
         .first();
@@ -225,13 +240,13 @@ class AuthApiController {
         });
       }
 
-      // Handle file upload
+      // Handle upload file
       let fotoPath = null;
       if (foto) {
         fotoPath = await UploadService.save(foto, 'profiles');
       }
 
-      // Create user
+      // Buat user
       const userId = randomUUID();
       const hashedPassword = await Authenticate.hash(password);
 

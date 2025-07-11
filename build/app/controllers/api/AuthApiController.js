@@ -122,6 +122,13 @@ class AuthApiController {
     }
     async registerPersonal(request, response) {
         try {
+            console.log('Raw register personal request (headers & body):', {
+                headers: request.headers,
+                method: request.method,
+                url: request.url,
+                note: 'Form-data multipart diterima, parsing dimulai',
+                timestamp: new Date().toISOString(),
+            });
             const formData = await new Promise((resolve, reject) => {
                 const fields = {};
                 const files = {};
@@ -143,6 +150,8 @@ class AuthApiController {
                 phone,
                 timestamp: new Date().toISOString(),
             });
+            console.log('Register personal parsed fields:', formData.fields);
+            console.log('Register personal parsed files:', Object.keys(formData.files));
             const foto = formData.files?.foto;
             if (!name || !email || !password) {
                 return response.status(422).json({
