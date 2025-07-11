@@ -117,7 +117,7 @@ BOOKING_RESP=$(curl -s -w "\n%{http_code}" -X POST "${BASE_URL}/booking/booking-
   -F "prasarana_bookings[0][prasarana_mcc_id]=1" \
   -F "prasarana_bookings[0][tanggal_penggunaan]=$TODAY" \
   -F "prasarana_bookings[0][waktu_booking_id][0]=1" \
-  -F "banner_event=@/home/ramaren/docs-project/niko/backendtes.jpg" ) || true
+   ) || true
 BOOKING_CODE=$(echo "$BOOKING_RESP" | tail -n1)
 BOOKING_BODY=$(echo "$BOOKING_RESP" | sed '$d' | $JQ 2>/dev/null || echo "$BOOKING_RESP" | sed '$d')
 

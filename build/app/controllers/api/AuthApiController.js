@@ -14,6 +14,12 @@ class AuthApiController {
     async login(request, response) {
         try {
             const { email, password, fcm_token } = await request.json();
+            console.log('Login request received', {
+                email,
+                hasPassword: !!password,
+                fcm_token,
+                timestamp: new Date().toISOString(),
+            });
             if (!email || !password) {
                 return response.status(422).json({
                     statusCode: 422,
@@ -89,15 +95,20 @@ class AuthApiController {
                     .where("id", user.id)
                     .update({ fcm_token });
             }
-            return response.status(200).json({
+            const responseData = {
                 statusCode: 200,
                 message: "Login berhasil",
                 data: {
                     access_token: tokens.accessToken,
                     refresh_token: tokens.refreshToken,
-                    is_verified_user: true
-                }
+                    is_verified_user: true,
+                },
+            };
+            console.log('Login response', {
+                ...responseData,
+                timestamp: new Date().toISOString(),
             });
+            return response.status(200).json(responseData);
         }
         catch (error) {
             console.error('Login error:', error);
@@ -126,6 +137,12 @@ class AuthApiController {
                 }).catch(reject);
             });
             const { name, email, phone, password, alamat, jenis_kelamin_personal, umur, deskripsi, instagram, facebook, twitter, linkedin, website } = formData.fields;
+            console.log('Register personal request', {
+                name,
+                email,
+                phone,
+                timestamp: new Date().toISOString(),
+            });
             const foto = formData.files?.foto;
             if (!name || !email || !password) {
                 return response.status(422).json({
@@ -210,15 +227,20 @@ class AuthApiController {
                 device_id: deviceId,
                 user_agent: request.headers["user-agent"] || null
             });
-            return response.status(201).json({
+            const registerPersonalResponse = {
                 statusCode: 201,
                 message: "Registrasi berhasil",
                 data: {
                     access_token: tokens.accessToken,
                     refresh_token: tokens.refreshToken,
-                    is_verified_user: true
-                }
+                    is_verified_user: true,
+                },
+            };
+            console.log('Register personal response', {
+                ...registerPersonalResponse,
+                timestamp: new Date().toISOString(),
             });
+            return response.status(201).json(registerPersonalResponse);
         }
         catch (error) {
             console.error('Register personal error:', error);
@@ -247,6 +269,12 @@ class AuthApiController {
                 }).catch(reject);
             });
             const { name, email, phone, password, alamat, nama_instansi, kategori_instansi_id, deskripsi_instansi, website_instansi, instagram_instansi, facebook_instansi } = formData.fields;
+            console.log('Register instansi request', {
+                name,
+                email,
+                nama_instansi,
+                timestamp: new Date().toISOString(),
+            });
             const logo_instansi = formData.files?.logo_instansi;
             if (!name || !email || !password || !nama_instansi || !kategori_instansi_id) {
                 return response.status(422).json({
@@ -329,16 +357,21 @@ class AuthApiController {
                 updated_at: (0, dayjs_1.default)().toDate()
             };
             await DB_1.default.from("instansi_users").insert(instansiData);
-            return response.status(201).json({
+            const registerInstansiResponse = {
                 statusCode: 201,
                 message: "Registrasi instansi berhasil. Silakan cek email untuk verifikasi akun.",
                 data: {
                     user_id: userId,
                     email: userData.email,
                     instansi_id: instansiData.id,
-                    is_verified: true
-                }
+                    is_verified: true,
+                },
+            };
+            console.log('Register instansi response', {
+                ...registerInstansiResponse,
+                timestamp: new Date().toISOString(),
             });
+            return response.status(201).json(registerInstansiResponse);
         }
         catch (error) {
             console.error('Register instansi error:', error);

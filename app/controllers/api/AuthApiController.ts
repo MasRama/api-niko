@@ -15,6 +15,13 @@ class AuthApiController {
   public async login(request: Request, response: Response) {
     try {
       const { email, password, fcm_token } = await request.json();
+      // Log request untuk endpoint login
+      console.log('Login request received', {
+        email,
+        hasPassword: !!password,
+        fcm_token,
+        timestamp: new Date().toISOString(),
+      });
 
       // Validation
       if (!email || !password) {
@@ -106,15 +113,22 @@ class AuthApiController {
           .update({ fcm_token });
       }
 
-      return response.status(200).json({
+      const responseData = {
         statusCode: 200,
         message: "Login berhasil",
         data: {
           access_token: tokens.accessToken,
           refresh_token: tokens.refreshToken,
-          is_verified_user: true
-        }
+          is_verified_user: true,
+        },
+      };
+      // Log response untuk endpoint login
+      console.log('Login response', {
+        ...responseData,
+        timestamp: new Date().toISOString(),
       });
+
+      return response.status(200).json(responseData);
 
     } catch (error) {
       console.error('Login error:', error);
@@ -154,6 +168,14 @@ class AuthApiController {
         jenis_kelamin_personal, umur, deskripsi,
         instagram, facebook, twitter, linkedin, website
       } = formData.fields;
+
+      // Log request untuk endpoint register personal
+      console.log('Register personal request', {
+        name,
+        email,
+        phone,
+        timestamp: new Date().toISOString(),
+      });
 
       const foto = formData.files?.foto;
 
@@ -257,15 +279,23 @@ class AuthApiController {
 
       // Skip sending verification email
 
-      return response.status(201).json({
+      const registerPersonalResponse = {
         statusCode: 201,
         message: "Registrasi berhasil",
         data: {
           access_token: tokens.accessToken,
           refresh_token: tokens.refreshToken,
-          is_verified_user: true
-        }
+          is_verified_user: true,
+        },
+      };
+
+      // Log response untuk endpoint register personal
+      console.log('Register personal response', {
+        ...registerPersonalResponse,
+        timestamp: new Date().toISOString(),
       });
+
+      return response.status(201).json(registerPersonalResponse);
 
     } catch (error) {
       console.error('Register personal error:', error);
@@ -305,6 +335,14 @@ class AuthApiController {
         nama_instansi, kategori_instansi_id, deskripsi_instansi,
         website_instansi, instagram_instansi, facebook_instansi
       } = formData.fields;
+
+      // Log request untuk endpoint register instansi
+      console.log('Register instansi request', {
+        name,
+        email,
+        nama_instansi,
+        timestamp: new Date().toISOString(),
+      });
 
       const logo_instansi = formData.files?.logo_instansi;
 
@@ -408,16 +446,24 @@ class AuthApiController {
 
       // Skip sending verification email
 
-      return response.status(201).json({
+      const registerInstansiResponse = {
         statusCode: 201,
         message: "Registrasi instansi berhasil. Silakan cek email untuk verifikasi akun.",
         data: {
           user_id: userId,
           email: userData.email,
           instansi_id: instansiData.id,
-          is_verified: true
-        }
+          is_verified: true,
+        },
+      };
+
+      // Log response untuk endpoint register instansi
+      console.log('Register instansi response', {
+        ...registerInstansiResponse,
+        timestamp: new Date().toISOString(),
       });
+
+      return response.status(201).json(registerInstansiResponse);
 
     } catch (error) {
       console.error('Register instansi error:', error);
