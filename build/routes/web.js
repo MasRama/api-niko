@@ -7,6 +7,7 @@ const AuthController_1 = __importDefault(require("../app/controllers/AuthControl
 const auth_1 = __importDefault(require("../app/middlewares/auth"));
 const HomeController_1 = __importDefault(require("../app/controllers/HomeController"));
 const AssetController_1 = __importDefault(require("../app/controllers/AssetController"));
+const api_1 = __importDefault(require("./api"));
 const hyper_express_1 = __importDefault(require("hyper-express"));
 const Route = new hyper_express_1.default.Router();
 Route.get("/", HomeController_1.default.index);
@@ -26,6 +27,7 @@ Route.get("/profile", [auth_1.default], AuthController_1.default.profilePage);
 Route.post("/change-profile", [auth_1.default], AuthController_1.default.changeProfile);
 Route.post("/change-password", [auth_1.default], AuthController_1.default.changePassword);
 Route.delete("/users", [auth_1.default], AuthController_1.default.deleteUsers);
+Route.use("/api/v1", api_1.default);
 Route.get("/assets/:file", AssetController_1.default.distFolder);
 Route.get("/*", AssetController_1.default.publicFolder);
 exports.default = Route;

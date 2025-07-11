@@ -10,7 +10,19 @@ const cors_1 = __importDefault(require("cors"));
 const webserver = new hyper_express_1.default.Server();
 require("dotenv").config();
 require("./app/services/View");
-webserver.use((0, cors_1.default)());
+webserver.use((0, cors_1.default)({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'X-Requested-With',
+        'Accept',
+        'Origin'
+    ],
+    exposedHeaders: ['Authorization']
+}));
 webserver.use((0, inertia_1.default)());
 webserver.use(web_1.default);
 const PORT = parseInt(process.env.PORT) || 5555;
