@@ -1,6 +1,7 @@
 import DB from "../../services/DB";
 import { Request, Response } from "../../../type";
 import dayjs from "dayjs";
+import UploadService from "../../services/UploadService";
 
 class ProfileApiController {
   /**
@@ -134,11 +135,8 @@ class ProfileApiController {
 
       // Handle file upload
       if (foto) {
-        const fileName = `${Date.now()}_${foto.filename}`;
-        const fotoPath = `uploads/profiles/${fileName}`;
-        // TODO: Implement actual file saving logic
-        // await foto.save(fotoPath);
-        fieldsToUpdate.foto = fotoPath;
+        const fotoPathSaved = await UploadService.save(foto, 'profiles');
+        fieldsToUpdate.foto = fotoPathSaved;
       }
 
       // Check if email is being changed and already exists
@@ -369,11 +367,8 @@ class ProfileApiController {
 
       // Handle logo upload
       if (logo) {
-        const fileName = `${Date.now()}_${logo.filename}`;
-        const logoPath = `uploads/logos/${fileName}`;
-        // TODO: Implement actual file saving logic
-        // await logo.save(logoPath);
-        fieldsToUpdate.logo_instansi = logoPath;
+        const logoPathSaved = await UploadService.save(logo, 'logos');
+        fieldsToUpdate.logo_instansi = logoPathSaved;
       }
 
       // Add updated_at timestamp

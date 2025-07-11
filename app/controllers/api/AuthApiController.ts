@@ -5,6 +5,7 @@ import { Request, Response } from "../../../type";
 import { randomUUID } from "crypto";
 import dayjs from "dayjs";
 import Mailer from "../../services/Mailer";
+import UploadService from "../../services/UploadService";
 
 class AuthApiController {
   /**
@@ -76,20 +77,7 @@ class AuthApiController {
         });
       }
 
-      // Check if user is verified
-      if (!user.is_verified) {
-        // Generate temporary token for unverified user
-        const tempToken = JWTUtils.generateAccessToken(user.id, user.email);
-        
-        return response.status(200).json({
-          statusCode: 200,
-          message: "Akun belum terverifikasi",
-          data: {
-            is_verified_user: false,
-            token: tempToken
-          }
-        });
-      }
+      // Skip email verification requirement as per latest requirement
 
       // Generate JWT tokens
       const tokens = JWTUtils.generateTokenPair(user.id, user.email);
@@ -218,10 +206,7 @@ class AuthApiController {
       // Handle file upload
       let fotoPath = null;
       if (foto) {
-        const fileName = `${Date.now()}_${foto.filename}`;
-        fotoPath = `uploads/profiles/${fileName}`;
-        // TODO: Implement actual file saving logic
-        // await foto.save(fotoPath);
+        fotoPath = await UploadService.save(foto, 'profiles');
       }
 
       // Create user
@@ -270,8 +255,7 @@ class AuthApiController {
         user_agent: request.headers["user-agent"] || null
       });
 
-      // Send verification email
-      await this.sendVerificationEmail(userData);
+      // Skip sending verification email
 
       return response.status(201).json({
         statusCode: 201,
@@ -383,10 +367,7 @@ class AuthApiController {
       // Handle logo upload
       let logoPath = null;
       if (logo_instansi) {
-        const fileName = `${Date.now()}_${logo_instansi.filename}`;
-        logoPath = `uploads/logos/${fileName}`;
-        // TODO: Implement actual file saving logic
-        // await logo_instansi.save(logoPath);
+        logoPath = await UploadService.save(logo_instansi, 'logos');
       }
 
       // Create user
@@ -425,8 +406,7 @@ class AuthApiController {
 
       await DB.from("instansi_users").insert(instansiData);
 
-      // Send verification email
-      await this.sendVerificationEmail(userData);
+      // Skip sending verification email
 
       return response.status(201).json({
         statusCode: 201,

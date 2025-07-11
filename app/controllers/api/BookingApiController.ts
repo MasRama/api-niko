@@ -2,6 +2,7 @@ import DB from "../../services/DB";
 import { Request, Response } from "../../../type";
 import { randomUUID } from "crypto";
 import dayjs from "dayjs";
+import UploadService from "../../services/UploadService";
 
 class BookingApiController {
   /**
@@ -122,27 +123,15 @@ class BookingApiController {
       let ttdPath = null;
 
       if (files.banner_event) {
-        const bannerFile = files.banner_event;
-        const bannerFileName = `${Date.now()}_${bannerFile.filename}`;
-        bannerPath = `uploads/banners/${bannerFileName}`;
-        // TODO: Implement actual file saving logic
-        // await bannerFile.save(bannerPath);
+        bannerPath = await UploadService.save(files.banner_event, 'banners');
       }
 
       if (files.proposal_event) {
-        const proposalFile = files.proposal_event;
-        const proposalFileName = `${Date.now()}_${proposalFile.filename}`;
-        proposalPath = `uploads/proposals/${proposalFileName}`;
-        // TODO: Implement actual file saving logic
-        // await proposalFile.save(proposalPath);
+        proposalPath = await UploadService.save(files.proposal_event, 'proposals');
       }
 
       if (files.ttd) {
-        const ttdFile = files.ttd;
-        const ttdFileName = `${Date.now()}_${ttdFile.filename}`;
-        ttdPath = `uploads/signatures/${ttdFileName}`;
-        // TODO: Implement actual file saving logic
-        // await ttdFile.save(ttdPath);
+        ttdPath = await UploadService.save(files.ttd, 'signatures');
       }
 
       // Start transaction

@@ -28,6 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const DB_1 = __importDefault(require("../../services/DB"));
 const dayjs_1 = __importDefault(require("dayjs"));
+const UploadService_1 = __importDefault(require("../../services/UploadService"));
 class ProfileApiController {
     async getProfile(request, response) {
         try {
@@ -144,9 +145,8 @@ class ProfileApiController {
             if (updateData.website)
                 fieldsToUpdate.website = updateData.website;
             if (foto) {
-                const fileName = `${Date.now()}_${foto.filename}`;
-                const fotoPath = `uploads/profiles/${fileName}`;
-                fieldsToUpdate.foto = fotoPath;
+                const fotoPathSaved = await UploadService_1.default.save(foto, 'profiles');
+                fieldsToUpdate.foto = fotoPathSaved;
             }
             if (fieldsToUpdate.email && fieldsToUpdate.email !== existingUser.email) {
                 const emailExists = await DB_1.default.from("users")
@@ -338,9 +338,8 @@ class ProfileApiController {
             if (updateData.facebook_instansi)
                 fieldsToUpdate.facebook_instansi = updateData.facebook_instansi;
             if (logo) {
-                const fileName = `${Date.now()}_${logo.filename}`;
-                const logoPath = `uploads/logos/${fileName}`;
-                fieldsToUpdate.logo_instansi = logoPath;
+                const logoPathSaved = await UploadService_1.default.save(logo, 'logos');
+                fieldsToUpdate.logo_instansi = logoPathSaved;
             }
             fieldsToUpdate.updated_at = (0, dayjs_1.default)().toDate();
             await DB_1.default.from("instansi_users")

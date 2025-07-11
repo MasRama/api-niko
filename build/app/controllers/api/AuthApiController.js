@@ -9,6 +9,7 @@ const JWTUtils_1 = require("../../utils/JWTUtils");
 const crypto_1 = require("crypto");
 const dayjs_1 = __importDefault(require("dayjs"));
 const Mailer_1 = __importDefault(require("../../services/Mailer"));
+const UploadService_1 = __importDefault(require("../../services/UploadService"));
 class AuthApiController {
     async login(request, response) {
         try {
@@ -66,17 +67,6 @@ class AuthApiController {
                         }
                     ],
                     data: null
-                });
-            }
-            if (!user.is_verified) {
-                const tempToken = JWTUtils_1.JWTUtils.generateAccessToken(user.id, user.email);
-                return response.status(200).json({
-                    statusCode: 200,
-                    message: "Akun belum terverifikasi",
-                    data: {
-                        is_verified_user: false,
-                        token: tempToken
-                    }
                 });
             }
             const tokens = JWTUtils_1.JWTUtils.generateTokenPair(user.id, user.email);
@@ -180,8 +170,7 @@ class AuthApiController {
             }
             let fotoPath = null;
             if (foto) {
-                const fileName = `${Date.now()}_${foto.filename}`;
-                fotoPath = `uploads/profiles/${fileName}`;
+                fotoPath = await UploadService_1.default.save(foto, 'profiles');
             }
             const userId = (0, crypto_1.randomUUID)();
             const hashedPassword = await Authenticate_1.default.hash(password);
@@ -221,7 +210,6 @@ class AuthApiController {
                 device_id: deviceId,
                 user_agent: request.headers["user-agent"] || null
             });
-            await this.sendVerificationEmail(userData);
             return response.status(201).json({
                 statusCode: 201,
                 message: "Registrasi berhasil",
@@ -310,8 +298,7 @@ class AuthApiController {
             }
             let logoPath = null;
             if (logo_instansi) {
-                const fileName = `${Date.now()}_${logo_instansi.filename}`;
-                logoPath = `uploads/logos/${fileName}`;
+                logoPath = await UploadService_1.default.save(logo_instansi, 'logos');
             }
             const userId = (0, crypto_1.randomUUID)();
             const hashedPassword = await Authenticate_1.default.hash(password);
@@ -342,7 +329,6 @@ class AuthApiController {
                 updated_at: (0, dayjs_1.default)().toDate()
             };
             await DB_1.default.from("instansi_users").insert(instansiData);
-            await this.sendVerificationEmail(userData);
             return response.status(201).json({
                 statusCode: 201,
                 message: "Registrasi instansi berhasil. Silakan cek email untuk verifikasi akun.",

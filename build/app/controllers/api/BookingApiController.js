@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const DB_1 = __importDefault(require("../../services/DB"));
 const crypto_1 = require("crypto");
 const dayjs_1 = __importDefault(require("dayjs"));
+const UploadService_1 = __importDefault(require("../../services/UploadService"));
 class BookingApiController {
     async createBooking(request, response) {
         try {
@@ -102,19 +103,13 @@ class BookingApiController {
             let proposalPath = null;
             let ttdPath = null;
             if (files.banner_event) {
-                const bannerFile = files.banner_event;
-                const bannerFileName = `${Date.now()}_${bannerFile.filename}`;
-                bannerPath = `uploads/banners/${bannerFileName}`;
+                bannerPath = await UploadService_1.default.save(files.banner_event, 'banners');
             }
             if (files.proposal_event) {
-                const proposalFile = files.proposal_event;
-                const proposalFileName = `${Date.now()}_${proposalFile.filename}`;
-                proposalPath = `uploads/proposals/${proposalFileName}`;
+                proposalPath = await UploadService_1.default.save(files.proposal_event, 'proposals');
             }
             if (files.ttd) {
-                const ttdFile = files.ttd;
-                const ttdFileName = `${Date.now()}_${ttdFile.filename}`;
-                ttdPath = `uploads/signatures/${ttdFileName}`;
+                ttdPath = await UploadService_1.default.save(files.ttd, 'signatures');
             }
             const trx = await DB_1.default.transaction();
             try {
