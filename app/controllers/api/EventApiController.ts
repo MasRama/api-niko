@@ -37,7 +37,7 @@ class EventApiController {
       // Build base query
       let query = DB.from("booking_events as be")
         .leftJoin("users as u", "be.account_id", "u.id")
-        .leftJoin("instansi_users as iu", "be.account_id", "iu.account_id")
+        .leftJoin("instansi_users as iu", "be.account_id", "iu.user_id")
         .leftJoin("kategori_event as ke", "be.kategori_event_id", "ke.id")
         .leftJoin("ekraf as e", "be.ekraf_id", "e.id")
         .leftJoin("prasarana_bookings as pb", "be.id", "pb.booking_event_id")
@@ -84,12 +84,12 @@ class EventApiController {
           "be.account_id",
           "be.ekraf_id",
           "pb.tanggal_penggunaan as tanggal_query",
-          DB.raw("CASE WHEN iu.nama_instansi IS NOT NULL THEN json_object('nama', iu.nama_instansi, 'id', iu.account_id) ELSE NULL END as accountInstansi"),
-          DB.raw("json_object('nama', u.nama, 'id', u.id) as account")
+          DB.raw("CASE WHEN iu.nama_instansi IS NOT NULL THEN json_object('nama', iu.nama_instansi, 'id', iu.user_id) ELSE NULL END as accountInstansi"),
+          DB.raw("json_object('nama', u.name, 'id', u.id) as account")
         )
         .groupBy("be.id", "be.kategori_event_id", "be.nama_event", "be.jenis_event", 
                  "be.banner_event", "be.account_id", "be.ekraf_id", "pb.tanggal_penggunaan",
-                 "u.nama", "u.id", "iu.nama_instansi", "iu.account_id")
+                 "u.name", "u.id", "iu.nama_instansi", "iu.user_id")
         .orderBy("be.created_at", "desc")
         .limit(toNumber(limit))
         .offset(offset);
