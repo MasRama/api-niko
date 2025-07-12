@@ -7,7 +7,7 @@ export async function seed(knex: Knex): Promise<void> {
     await knex("users").del();
 
     // Hash password
-    const hashedPassword = await bcrypt.hash('123', 10);
+    const hashedPassword = await bcrypt.hash('password', 10);
     const now = Date.now();
 
     // Inserts seed entries

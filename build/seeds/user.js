@@ -8,7 +8,7 @@ const uuid_1 = require("uuid");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 async function seed(knex) {
     await knex("users").del();
-    const hashedPassword = await bcrypt_1.default.hash('123', 10);
+    const hashedPassword = await bcrypt_1.default.hash('password', 10);
     const now = Date.now();
     await knex("users").insert([
         {
