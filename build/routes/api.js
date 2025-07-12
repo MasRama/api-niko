@@ -125,5 +125,28 @@ ApiRoute.get('/responded/pertanyaan/pendapat', FeedbackApiController_1.default.g
 ApiRoute.delete('/feedback/:id', [(0, jwtAuth_1.jwtAuth)()], FeedbackApiController_1.default.deleteFeedback);
 ApiRoute.get('/feedback/statistics', [(0, jwtAuth_1.jwtAuth)()], FeedbackApiController_1.default.getFeedbackStatistics);
 ApiRoute.get('/kategori', KategoriApiController_1.default.getKategori);
+ApiRoute.use('*', (req, res) => {
+    const apiLog = {
+        timestamp: new Date().toISOString(),
+        request: {
+            url: req.url,
+            method: req.method,
+            headers: req.headers,
+            body: req.body || null
+        },
+        response: {
+            statusCode: 404,
+            message: 'API endpoint not found'
+        },
+        duration: '0ms'
+    };
+    console.log('📋 API Log (404):', JSON.stringify(apiLog, null, 2));
+    res.status(404).json({
+        statusCode: 404,
+        message: 'API endpoint not found',
+        error: 'Not Found',
+        path: req.url
+    });
+});
 exports.default = ApiRoute;
 //# sourceMappingURL=api.js.map

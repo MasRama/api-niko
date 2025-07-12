@@ -228,4 +228,37 @@ ApiRoute.get('/feedback/statistics', [jwtRequired()], FeedbackApiController.getF
  */
 ApiRoute.get('/kategori', KategoriApiController.getKategori);
 
+/**
+ * 404 Handler for API Routes
+ * ------------------------------------------------
+ * Handles requests to non-existent API endpoints
+ * This middleware will log 404 errors for debugging
+ */
+ApiRoute.use('*', (req, res) => {
+    // Log 404 untuk debugging
+    const apiLog = {
+        timestamp: new Date().toISOString(),
+        request: {
+            url: req.url,
+            method: req.method,
+            headers: req.headers,
+            body: req.body || null
+        },
+        response: {
+            statusCode: 404,
+            message: 'API endpoint not found'
+        },
+        duration: '0ms'
+    };
+    
+    console.log('📋 API Log (404):', JSON.stringify(apiLog, null, 2));
+    
+    res.status(404).json({
+        statusCode: 404,
+        message: 'API endpoint not found',
+        error: 'Not Found',
+        path: req.url
+    });
+});
+
 export default ApiRoute;
