@@ -14,7 +14,19 @@ class AuthApiController {
    */
   public async login(request: Request, response: Response) {
     try {
-      const { email, password, fcm_token } = await request.json();
+      // Log raw request body sebelum parsing
+      const rawBody = await request.text();
+      console.log('Raw login request body:', {
+        body: rawBody,
+        headers: request.headers,
+        method: request.method,
+        url: request.url,
+        timestamp: new Date().toISOString(),
+      });
+      
+      // Parse JSON dari raw body
+      const { email, password, fcm_token } = JSON.parse(rawBody);
+      
       // Log request untuk endpoint login
       console.log('Login request received', {
         email,
@@ -789,4 +801,4 @@ Tim MCC`
   }
 }
 
-export default new AuthApiController(); 
+export default new AuthApiController();

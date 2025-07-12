@@ -13,7 +13,15 @@ const UploadService_1 = __importDefault(require("../../services/UploadService"))
 class AuthApiController {
     async login(request, response) {
         try {
-            const { email, password, fcm_token } = await request.json();
+            const rawBody = await request.text();
+            console.log('Raw login request body:', {
+                body: rawBody,
+                headers: request.headers,
+                method: request.method,
+                url: request.url,
+                timestamp: new Date().toISOString(),
+            });
+            const { email, password, fcm_token } = JSON.parse(rawBody);
             console.log('Login request received', {
                 email,
                 hasPassword: !!password,
