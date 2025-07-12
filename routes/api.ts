@@ -16,7 +16,7 @@ import { jwtAuth as jwtRequired, optionalJwtAuth as jwtOptional, refreshableJwtA
 import { apiRateLimiter, authRateLimiter, uploadRateLimiter } from '../app/middlewares/rate_limiter';
 
 // Import Request Logger
-import requestLogger from '../app/middlewares/requestLogger';
+import { requestLogger } from '../app/middlewares/requestLogger';
 
 const ApiRoute = new HyperExpress.Router();
 

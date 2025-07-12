@@ -13,10 +13,10 @@ const FeedbackApiController_1 = __importDefault(require("../app/controllers/api/
 const KategoriApiController_1 = __importDefault(require("../app/controllers/api/KategoriApiController"));
 const jwtAuth_1 = require("../app/middlewares/jwtAuth");
 const rate_limiter_1 = require("../app/middlewares/rate_limiter");
-const requestLogger_1 = __importDefault(require("../app/middlewares/requestLogger"));
+const requestLogger_1 = require("../app/middlewares/requestLogger");
 const ApiRoute = new hyper_express_1.default.Router();
 ApiRoute.use(rate_limiter_1.apiRateLimiter.middleware);
-ApiRoute.use(requestLogger_1.default);
+ApiRoute.use(requestLogger_1.requestLogger);
 ApiRoute.get('/health', (req, res) => {
     res.json({
         statusCode: 200,

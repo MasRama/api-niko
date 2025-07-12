@@ -27,38 +27,36 @@ ApiRoute.use(requestLogger);
 
 ### 3. Format Log Output
 
-#### Request Log:
-```
-=== API REQUEST LOG ===
-[2024-01-15T10:30:00.000Z] POST /api/v1/auth/login
-Headers: {
-  "content-type": "application/json",
-  "authorization": "Bearer ..."
-}
-Query Parameters: { "page": "1" }
-URL Parameters: { "id": "123" }
-Request Body: {
-  "email": "user@example.com",
-  "password": "***"
-}
-Authenticated User: {
-  "id": 1,
-  "email": "user@example.com",
-  "name": "John Doe"
-}
-```
+Middleware akan menghasilkan satu log gabungan untuk setiap API call:
 
-#### Response Log:
+#### API Log:
 ```
-=== API RESPONSE LOG ===
-Status: 200
-Duration: 150ms
-Response Data: {
-  "statusCode": 200,
-  "message": "Login berhasil",
-  "data": { ... }
+📋 API Log: {
+  "timestamp": "2024-01-15T10:30:45.123Z",
+  "request": {
+    "url": "/api/v1/auth/login",
+    "headers": {
+      "content-type": "application/json",
+      "authorization": "Bearer ...",
+      "user-agent": "..."
+    },
+    "body": {
+      "email": "user@example.com",
+      "password": "secretpassword"
+    }
+  },
+  "response": {
+    "data": {
+      "statusCode": 200,
+      "message": "Login berhasil",
+      "data": {
+        "access_token": "...",
+        "refresh_token": "..."
+      }
+    }
+  },
+  "duration": "333ms"
 }
-=== END REQUEST LOG ===
 ```
 
 ## Kegunaan
