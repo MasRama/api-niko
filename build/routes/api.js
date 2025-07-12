@@ -89,7 +89,6 @@ ApiRoute.post('/auth/register-instansi', [rate_limiter_1.authRateLimiter.middlew
 ApiRoute.post('/instansi-user', [rate_limiter_1.authRateLimiter.middleware, rate_limiter_1.uploadRateLimiter.middleware], AuthApiController_1.default.registerInstansi);
 ApiRoute.post('/auth/verify-account', [rate_limiter_1.authRateLimiter.middleware], AuthApiController_1.default.verifyAccount);
 ApiRoute.post('/auth/refresh-token', [jwtAuth_1.refreshableJwtAuth], AuthApiController_1.default.refreshToken);
-ApiRoute.post('/auth/save/fcm-token', [jwtAuth_1.optionalJwtAuth], AuthApiController_1.default.saveFcmToken);
 ApiRoute.post('/auth/logout', [(0, jwtAuth_1.jwtAuth)()], AuthApiController_1.default.logout);
 ApiRoute.get('/users/profile-user', [(0, jwtAuth_1.jwtAuth)()], ProfileApiController_1.default.getProfile);
 ApiRoute.patch('/users/profile-user', [(0, jwtAuth_1.jwtAuth)()], ProfileApiController_1.default.updateProfile);

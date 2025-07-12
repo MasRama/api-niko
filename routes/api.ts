@@ -124,11 +124,9 @@ ApiRoute.post('/auth/verify-account', [authRateLimiter.middleware], AuthApiContr
  * Token Management Routes (Special JWT Handling)
  * ------------------------------------------------
  * POST /auth/refresh-token - Refresh access token (requires refresh token)
- * POST /auth/save/fcm-token - Save FCM token (optional JWT)
  * POST /auth/logout - Logout user (requires JWT)
  */
 ApiRoute.post('/auth/refresh-token', [jwtRefreshable], AuthApiController.refreshToken);
-ApiRoute.post('/auth/save/fcm-token', [jwtOptional], AuthApiController.saveFcmToken);
 ApiRoute.post('/auth/logout', [jwtRequired()], AuthApiController.logout);
 
 /**

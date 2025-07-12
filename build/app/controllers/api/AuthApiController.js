@@ -21,11 +21,10 @@ class AuthApiController {
                 url: request.url,
                 timestamp: new Date().toISOString(),
             });
-            const { email, password, fcm_token } = JSON.parse(rawBody);
+            const { email, password } = JSON.parse(rawBody);
             console.log('Login request received', {
                 email,
                 hasPassword: !!password,
-                fcm_token,
                 timestamp: new Date().toISOString(),
             });
             if (!email || !password) {
@@ -95,14 +94,8 @@ class AuthApiController {
                 refresh_expires_at: (0, dayjs_1.default)().add(tokens.refreshExpiresIn, 'seconds').toDate(),
                 device_type: 'mobile',
                 device_id: deviceId,
-                fcm_token: fcm_token || null,
                 user_agent: request.headers["user-agent"] || null
             });
-            if (fcm_token) {
-                await DB_1.default.from("users")
-                    .where("id", user.id)
-                    .update({ fcm_token });
-            }
             const responseData = {
                 statusCode: 200,
                 message: "Login berhasil",
@@ -522,49 +515,6 @@ class AuthApiController {
         }
         catch (error) {
             console.error('Refresh token error:', error);
-            return response.status(500).json({
-                statusCode: 500,
-                message: "Terjadi kesalahan server",
-                errors: ["Internal server error"],
-                data: null
-            });
-        }
-    }
-    async saveFcmToken(request, response) {
-        try {
-            const { fcm_token } = await request.json();
-            if (!fcm_token) {
-                return response.status(400).json({
-                    statusCode: 400,
-                    message: "FCM token wajib diisi",
-                    errors: ["FCM token diperlukan"],
-                    data: null
-                });
-            }
-            await DB_1.default.from("users")
-                .where("id", request.user.id)
-                .update({
-                fcm_token,
-                updated_at: (0, dayjs_1.default)().toDate()
-            });
-            if (request.sessionId) {
-                await DB_1.default.from("sessions")
-                    .where("id", request.sessionId)
-                    .update({
-                    fcm_token,
-                    updated_at: (0, dayjs_1.default)().toDate()
-                });
-            }
-            return response.status(200).json({
-                statusCode: 200,
-                message: "FCM token berhasil disimpan",
-                data: {
-                    fcm_token
-                }
-            });
-        }
-        catch (error) {
-            console.error('Save FCM token error:', error);
             return response.status(500).json({
                 statusCode: 500,
                 message: "Terjadi kesalahan server",

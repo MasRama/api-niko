@@ -25,13 +25,12 @@ class AuthApiController {
       });
       
       // Parse JSON dari raw body
-      const { email, password, fcm_token } = JSON.parse(rawBody);
+      const { email, password } = JSON.parse(rawBody);
       
       // Log request untuk endpoint login
       console.log('Login request received', {
         email,
         hasPassword: !!password,
-        fcm_token,
         timestamp: new Date().toISOString(),
       });
 
@@ -114,16 +113,10 @@ class AuthApiController {
         refresh_expires_at: dayjs().add(tokens.refreshExpiresIn, 'seconds').toDate(),
         device_type: 'mobile',
         device_id: deviceId,
-        fcm_token: fcm_token || null,
         user_agent: request.headers["user-agent"] || null
       });
 
-      // Update FCM token in user record if provided
-      if (fcm_token) {
-        await DB.from("users")
-          .where("id", user.id)
-          .update({ fcm_token });
-      }
+
 
       const responseData = {
         statusCode: 200,
@@ -671,59 +664,7 @@ class AuthApiController {
     }
   }
 
-  /**
-   * Save FCM token
-   * POST /api/v1/auth/save/fcm-token
-   */
-  public async saveFcmToken(request: Request, response: Response) {
-    try {
-      const { fcm_token } = await request.json();
 
-      if (!fcm_token) {
-        return response.status(400).json({
-          statusCode: 400,
-          message: "FCM token wajib diisi",
-          errors: ["FCM token diperlukan"],
-          data: null
-        });
-      }
-
-      // Update user FCM token
-      await DB.from("users")
-        .where("id", request.user.id)
-        .update({ 
-          fcm_token,
-          updated_at: dayjs().toDate()
-        });
-
-      // Update session FCM token if exists
-      if (request.sessionId) {
-        await DB.from("sessions")
-          .where("id", request.sessionId)
-          .update({
-            fcm_token,
-            updated_at: dayjs().toDate()
-          });
-      }
-
-      return response.status(200).json({
-        statusCode: 200,
-        message: "FCM token berhasil disimpan",
-        data: {
-          fcm_token
-        }
-      });
-
-    } catch (error) {
-      console.error('Save FCM token error:', error);
-      return response.status(500).json({
-        statusCode: 500,
-        message: "Terjadi kesalahan server",
-        errors: ["Internal server error"],
-        data: null
-      });
-    }
-  }
 
   /**
    * Logout

@@ -61,7 +61,7 @@ export const jwtAuth = (options: JWTAuthOptions = { required: true, allowRefresh
           "id", "name", "email", "phone", "is_admin", "is_verified", 
           "foto", "alamat", "jenis_kelamin_personal", "umur", "deskripsi",
           "instagram", "facebook", "twitter", "linkedin", "website",
-          "fcm_token", "is_verified_user"
+          "is_verified_user"
         ])
         .first();
 
@@ -168,4 +168,4 @@ export default jwtAuth({ required: true });
 export const optionalJwtAuth = jwtAuth({ required: false });
 
 // Export middleware that allows refresh token flow
-export const refreshableJwtAuth = jwtAuth({ required: true, allowRefresh: true }); 
+export const refreshableJwtAuth = jwtAuth({ required: true, allowRefresh: true });

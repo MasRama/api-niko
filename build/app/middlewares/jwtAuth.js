@@ -51,7 +51,7 @@ const jwtAuth = (options = { required: true, allowRefresh: false }) => {
                 "id", "name", "email", "phone", "is_admin", "is_verified",
                 "foto", "alamat", "jenis_kelamin_personal", "umur", "deskripsi",
                 "instagram", "facebook", "twitter", "linkedin", "website",
-                "fcm_token", "is_verified_user"
+                "is_verified_user"
             ])
                 .first();
             if (!user) {

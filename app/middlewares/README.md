@@ -145,4 +145,3 @@ Middleware menggunakan tabel `sessions` yang sudah diextend dengan field:
 - `expires_at`: Untuk cek expiry di database
 - `device_type`: Mobile/Web identification
 - `device_id`: Unique device identifier
-- `fcm_token`: For push notifications 
