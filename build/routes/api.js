@@ -125,7 +125,7 @@ ApiRoute.get('/responded/pertanyaan/pendapat', FeedbackApiController_1.default.g
 ApiRoute.delete('/feedback/:id', [(0, jwtAuth_1.jwtAuth)()], FeedbackApiController_1.default.deleteFeedback);
 ApiRoute.get('/feedback/statistics', [(0, jwtAuth_1.jwtAuth)()], FeedbackApiController_1.default.getFeedbackStatistics);
 ApiRoute.get('/kategori', KategoriApiController_1.default.getKategori);
-ApiRoute.use('*', (req, res) => {
+ApiRoute.all('*', (req, res) => {
     const apiLog = {
         timestamp: new Date().toISOString(),
         request: {

@@ -234,7 +234,7 @@ ApiRoute.get('/kategori', KategoriApiController.getKategori);
  * Handles requests to non-existent API endpoints
  * This middleware will log 404 errors for debugging
  */
-ApiRoute.use('*', (req, res) => {
+ApiRoute.all('*', (req, res) => {
     // Log 404 untuk debugging
     const apiLog = {
         timestamp: new Date().toISOString(),
