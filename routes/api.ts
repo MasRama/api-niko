@@ -15,6 +15,9 @@ import { jwtAuth as jwtRequired, optionalJwtAuth as jwtOptional, refreshableJwtA
 // Import Rate Limiting
 import { apiRateLimiter, authRateLimiter, uploadRateLimiter } from '../app/middlewares/rate_limiter';
 
+// Import Request Logger
+import requestLogger from '../app/middlewares/requestLogger';
+
 const ApiRoute = new HyperExpress.Router();
 
 /**
@@ -25,6 +28,9 @@ const ApiRoute = new HyperExpress.Router();
 
 // Apply general rate limiting to all API routes
 ApiRoute.use(apiRateLimiter.middleware);
+
+// Apply request logging to all API routes for debugging
+ApiRoute.use(requestLogger);
 
 /**
  * Health Check & System Routes
@@ -224,4 +230,4 @@ ApiRoute.get('/feedback/statistics', [jwtRequired()], FeedbackApiController.getF
  */
 ApiRoute.get('/kategori', KategoriApiController.getKategori);
 
-export default ApiRoute; 
+export default ApiRoute;
