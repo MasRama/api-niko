@@ -107,7 +107,7 @@ ApiRoute.get('/booking/event/user', [(0, jwtAuth_1.jwtAuth)()], BookingApiContro
 ApiRoute.get('/booking/jadwal/:prasarana_id/:tanggal', BookingApiController_1.default.getJadwalAvailability);
 ApiRoute.get('/booking/show-jadwal/:idPrasarana', (req, res) => {
     req.params.prasarana_id = req.params.idPrasarana;
-    req.params.tanggal = req.query_parameters?.date || new Date().toISOString().split('T')[0];
+    req.params.tanggal = req.query.date || new Date().toISOString().split('T')[0];
     return BookingApiController_1.default.getJadwalAvailability(req, res);
 });
 ApiRoute.get('/booking/status', [(0, jwtAuth_1.jwtAuth)()], BookingApiController_1.default.getBookingStatus);

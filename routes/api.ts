@@ -180,7 +180,7 @@ ApiRoute.get('/booking/show-jadwal/:idPrasarana', (req, res) => {
     // @ts-ignore
     req.params.prasarana_id = req.params.idPrasarana;
     // @ts-ignore
-    req.params.tanggal = (req.query_parameters?.date as string) || new Date().toISOString().split('T')[0];
+    req.params.tanggal = (req.query.date as string) || new Date().toISOString().split('T')[0];
     // @ts-ignore
     return BookingApiController.getJadwalAvailability(req, res);
 });
