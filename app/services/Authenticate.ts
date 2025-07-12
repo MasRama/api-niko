@@ -7,6 +7,7 @@
 import DB from "./DB"; 
 import { Request, Response } from "../../type";
 import { randomUUID, pbkdf2Sync, randomBytes } from "crypto";
+import bcrypt from "bcrypt";
 
 // PBKDF2 configuration
 const ITERATIONS = 100000;
@@ -31,11 +32,18 @@ class Autenticate {
 
    /**
     * Compares a plain text password with a hashed password
+    * Supports both bcrypt and PBKDF2 formats
     * @param {string} password - The plain text password to verify
-    * @param {string} storedHash - The stored password hash with salt (format: salt:hash)
+    * @param {string} storedHash - The stored password hash (bcrypt format or salt:hash format)
     * @returns {boolean} True if passwords match, false otherwise
     */
    async compare(password: string, storedHash: string) {
+      // Check if it's bcrypt format (starts with $2a$, $2b$, $2x$, $2y$)
+      if (storedHash.startsWith('$2')) {
+         return await bcrypt.compare(password, storedHash);
+      }
+      
+      // Otherwise, use PBKDF2 format (salt:hash)
       const [salt, hash] = storedHash.split(':');
       const newHash = pbkdf2Sync(password, salt, ITERATIONS, KEYLEN, DIGEST).toString('hex');
       return hash === newHash;

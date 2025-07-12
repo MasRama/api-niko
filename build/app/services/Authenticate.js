@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const DB_1 = __importDefault(require("./DB"));
 const crypto_1 = require("crypto");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const ITERATIONS = 100000;
 const KEYLEN = 64;
 const DIGEST = 'sha512';
@@ -16,6 +17,9 @@ class Autenticate {
         return `${salt}:${hash}`;
     }
     async compare(password, storedHash) {
+        if (storedHash.startsWith('$2')) {
+            return await bcrypt_1.default.compare(password, storedHash);
+        }
         const [salt, hash] = storedHash.split(':');
         const newHash = (0, crypto_1.pbkdf2Sync)(password, salt, ITERATIONS, KEYLEN, DIGEST).toString('hex');
         return hash === newHash;
