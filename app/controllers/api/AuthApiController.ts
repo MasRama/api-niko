@@ -14,25 +14,13 @@ class AuthApiController {
    */
   public async login(request: Request, response: Response) {
     try {
-      // Log raw request body sebelum parsing
+      // Parse request body
       const rawBody = await request.text();
-      console.log('Raw login request body:', {
-        body: rawBody,
-        headers: request.headers,
-        method: request.method,
-        url: request.url,
-        timestamp: new Date().toISOString(),
-      });
       
       // Parse JSON dari raw body
       const { email, password } = JSON.parse(rawBody);
       
-      // Log request untuk endpoint login
-      console.log('Login request received', {
-        email,
-        hasPassword: !!password,
-        timestamp: new Date().toISOString(),
-      });
+
 
       // Validation
       if (!email || !password) {
@@ -127,16 +115,11 @@ class AuthApiController {
           is_verified_user: true,
         },
       };
-      // Log response untuk endpoint login
-      console.log('Login response', {
-        ...responseData,
-        timestamp: new Date().toISOString(),
-      });
+
 
       return response.status(200).json(responseData);
 
     } catch (error) {
-      console.error('Login error:', error);
       return response.status(500).json({
         statusCode: 500,
         message: "Terjadi kesalahan server",
@@ -152,16 +135,7 @@ class AuthApiController {
    */
   public async registerPersonal(request: Request, response: Response) {
     try {
-      // Log mentah (raw) request body/form-data
-      console.log('Raw register personal request (headers & body):', {
-        headers: request.headers,
-        // Catat info form-data mentah, jika ada
-        method: request.method,
-        url: request.url,
-        // Tidak bisa log stream body secara langsung, jadi log info saja
-        note: 'Form-data multipart diterima, parsing dimulai',
-        timestamp: new Date().toISOString(),
-      });
+
 
       // Parse multipart form data dengan handler yang sesuai
       const formData = await new Promise<{ fields: any; files: any }>((resolve, reject) => {
@@ -188,17 +162,7 @@ class AuthApiController {
       // Gunakan field asli dari request tanpa mapping tambahan
       const password = pwd;
 
-      // Log request untuk endpoint register personal (setelah parsing)
-      console.log('Register personal request', {
-        nama,
-        email,
-        no_telp,
-        timestamp: new Date().toISOString(),
-      });
 
-      // Log fields dan files mentah hasil parsing
-      console.log('Register personal parsed fields:', formData.fields);
-      console.log('Register personal parsed files:', Object.keys(formData.files));
 
       const foto = formData.files?.foto;
 
@@ -313,15 +277,11 @@ class AuthApiController {
       };
 
       // Log response untuk endpoint register personal
-      console.log('Register personal response', {
-        ...registerPersonalResponse,
-        timestamp: new Date().toISOString(),
-      });
+
 
       return response.status(201).json(registerPersonalResponse);
 
     } catch (error) {
-      console.error('Register personal error:', error);
       return response.status(500).json({
         statusCode: 500,
         message: "Terjadi kesalahan server",
@@ -359,13 +319,7 @@ class AuthApiController {
         website_instansi, instagram_instansi, facebook_instansi
       } = formData.fields;
 
-      // Log request untuk endpoint register instansi
-      console.log('Register instansi request', {
-        name,
-        email,
-        nama_instansi,
-        timestamp: new Date().toISOString(),
-      });
+
 
       const logo_instansi = formData.files?.logo_instansi;
 
@@ -480,16 +434,11 @@ class AuthApiController {
         },
       };
 
-      // Log response untuk endpoint register instansi
-      console.log('Register instansi response', {
-        ...registerInstansiResponse,
-        timestamp: new Date().toISOString(),
-      });
+
 
       return response.status(201).json(registerInstansiResponse);
 
     } catch (error) {
-      console.error('Register instansi error:', error);
       return response.status(500).json({
         statusCode: 500,
         message: "Terjadi kesalahan server",
@@ -578,7 +527,6 @@ class AuthApiController {
       });
 
     } catch (error) {
-      console.error('Verify account error:', error);
       return response.status(500).json({
         statusCode: 500,
         message: "Terjadi kesalahan server",
@@ -654,7 +602,6 @@ class AuthApiController {
       });
 
     } catch (error) {
-      console.error('Refresh token error:', error);
       return response.status(500).json({
         statusCode: 500,
         message: "Terjadi kesalahan server",
@@ -686,7 +633,6 @@ class AuthApiController {
       });
 
     } catch (error) {
-      console.error('Logout error:', error);
       return response.status(500).json({
         statusCode: 500,
         message: "Terjadi kesalahan server",
@@ -736,8 +682,7 @@ Tim MCC`
       });
 
     } catch (error) {
-      console.error('Send verification email error:', error);
-      // Don't throw error, just log it
+      // Don't throw error, just ignore it
     }
   }
 }
